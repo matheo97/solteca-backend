@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Double, JoinColumn, ManyToOne } from 'typeorm';
-import { IsUUID, IsOptional, Length, IsNumber, IsBoolean } from 'class-validator';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
+import { IsUUID, IsOptional, Length, IsBoolean } from 'class-validator';
 import { Auditable, BillItem, Company } from './index';
 
 @Entity('bill')
@@ -14,16 +14,13 @@ export class Bill extends Auditable {
   billNo?: string;
 
   @Column()
-  @IsNumber()
-  total?: Double;
+  total?: string;
 
   @Column({ name: 'total_iva' })
-  @IsNumber()
-  totalIva?: Double;
+  totalIva?: string;
 
   @Column({ name: 'other_expenses' })
-  @IsNumber()
-  otherExpenses?: Double;
+  otherExpenses?: string;
 
   @Column({ name: 'is_paid' })
   @IsBoolean()

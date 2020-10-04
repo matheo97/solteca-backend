@@ -24,8 +24,7 @@ export class BillItem extends Auditable {
   details?: string;
 
   @Column()
-  @IsNumber()
-  total?: Double;
+  total?: string;
 
   @ManyToOne(() => Bill, Bill => Bill.id)
   @JoinColumn({ name: 'bill_id' })
