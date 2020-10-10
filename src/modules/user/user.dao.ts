@@ -14,4 +14,11 @@ export class UserDAO {
   async createUser(): Promise<string> {
     return 'dao';
   }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.repository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
 }

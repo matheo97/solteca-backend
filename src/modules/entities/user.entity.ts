@@ -27,7 +27,7 @@ export class User extends Auditable {
   @Length(2, 255)
   name: string;
 
-  @Column({ name: 'l_name' })
+  @Column({ name: 'last_name' })
   @IsOptional()
   @Length(0, 255)
   lastName?: string;
