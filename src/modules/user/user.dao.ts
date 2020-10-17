@@ -11,7 +11,18 @@ export class UserDAO {
     private readonly repository: Repository<User>
   ) {}
 
-  async createUser(): Promise<string> {
-    return 'dao';
+  async getUserInfoById(userId: string): Promise<User> {
+    return this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.company', 'company')
+      .where('user.id = :userId', { userId })
+      .getOne();
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.repository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
   }
 }

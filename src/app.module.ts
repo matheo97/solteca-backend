@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './modules';
+import { AuthModule, UserModule, BillModule, CompanyModule } from './modules';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -8,6 +8,9 @@ require('dotenv').config();
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
+    AuthModule,
+    BillModule,
+    CompanyModule,
     UserModule,
   ],
 })

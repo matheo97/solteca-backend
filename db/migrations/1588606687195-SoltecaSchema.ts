@@ -47,7 +47,7 @@ class SoltecaSchema1588606687195 implements MigrationInterface {
       other_expenses double precision,
       is_paid boolean DEFAULT false,
       is_quote boolean DEFAULT false,
-      is_sells_receipt boolean DEFAULT true,
+      is_sale_receipt boolean DEFAULT true,
       created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
       updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
     )`, undefined);
