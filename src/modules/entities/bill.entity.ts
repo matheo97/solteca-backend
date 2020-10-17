@@ -19,6 +19,9 @@ export class Bill extends Auditable {
   @Column({ name: 'total_iva' })
   totalIva?: string;
 
+  @Column({ name: 'company_id' })
+  companyId?: string;
+
   @Column({ name: 'other_expenses' })
   otherExpenses?: string;
 

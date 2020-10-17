@@ -16,6 +16,7 @@ export class AuthService {
       return {
         userId: user.id,
         username: user.email,
+        ...user,
       };
     }
     return new UnauthorizedException(401, 'The email or password you entered is incorrect.');

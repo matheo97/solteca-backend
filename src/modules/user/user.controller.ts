@@ -1,6 +1,8 @@
 import {
   Controller,
   Get,
+  Param,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 
@@ -8,8 +10,10 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  async getFormats() {
-    return this.userService.createUser();
+  @Get('/:userId')
+  async getUserInfoById(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    return this.userService.getUserInfoById(userId);
   }
 }

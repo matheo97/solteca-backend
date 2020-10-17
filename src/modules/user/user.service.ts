@@ -1,21 +1,18 @@
 import {
   Injectable,
 } from '@nestjs/common';
+import { User } from '../entities/user.entity';
 import { UserDAO } from './user.dao';
-
-export type User = any;
 @Injectable()
 export class UserService {
-
-  private readonly users: User[];
   constructor(private readonly userDao: UserDAO) 
   {}
 
-  async createUser(): Promise<string> {
-    return this.userDao.createUser();
+  async getUserInfoById(userId: string): Promise<User> {
+    return this.userDao.getUserInfoById(userId);
   }
   
-  async getUserByEmail(email: string): Promise<User | undefined> {
+  async getUserByEmail(email: string): Promise<User> {
     return this.userDao.getUserByEmail(email);
   }
 }
