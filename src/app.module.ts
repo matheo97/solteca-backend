@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule, UserModule, BillModule, CompanyModule } from './modules';
+import {
+  AuthModule,
+  UserModule,
+  BillModule,
+  CompanyModule,
+  FileModule,
+} from './modules';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -11,6 +17,7 @@ require('dotenv').config();
     AuthModule,
     BillModule,
     CompanyModule,
+    FileModule,
     UserModule,
   ],
 })
