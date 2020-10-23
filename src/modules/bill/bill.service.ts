@@ -1,4 +1,8 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { getDatesByQuarter } from 'src/utils';
 import { Bill } from '../entities';
 import { BillDAO } from './bill.dao';
@@ -58,13 +62,22 @@ export class BillService {
       throw new BadRequestException('Id de la factura es requerido');
     }
     bill.billItems.forEach((item, index) => {
-      if (!item.id) throw new BadRequestException(`Id del elemento ${index} es nulo`);
-    })
+      if (!item.id)
+        throw new BadRequestException(`Id del elemento ${index} es nulo`);
+    });
     if (await this.billDao.billNoAlreadyExists(bill.billNo, bill.id)) {
       throw new ConflictException({
         error: 'Consecutivo de factura ya usado.',
       });
     }
     return this.billDao.createBill(bill);
+  }
+
+  async getConsecutiveForBill(companyId: string): Promise<{consecutive: number}> {
+    const bill = await this.billDao.getConsecutiveForBill(companyId);
+    const currentConsecutiveUsed = parseInt(bill.billNo, 10);
+    return {
+      consecutive: currentConsecutiveUsed + 1,
+    };
   }
 }

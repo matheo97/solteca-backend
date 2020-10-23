@@ -204,6 +204,14 @@ export class BillDAO {
     return this.repository.save(bill);
   }
 
+  async getConsecutiveForBill(companyId: string): Promise<Bill> {
+    return this.repository
+      .createQueryBuilder('bill')
+      .where('bill.companyId = :companyId', { companyId })
+      .orderBy('bill.created_at', 'DESC')
+      .getOne();
+  }
+
   async billNoAlreadyExists(billNo: string, billId?: string): Promise<boolean> {
     const bill = this.repository
       .createQueryBuilder('bill')
@@ -211,7 +219,7 @@ export class BillDAO {
 
     if (billId) {
       bill.andWhere('bill.id != :billId', { billId });
-    } 
+    }
 
     const result = await bill.getOne();
     console.log('result', result);

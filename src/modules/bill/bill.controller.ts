@@ -52,4 +52,11 @@ export class BillController {
   async updateBill(@Body() bill: Bill): Promise<Bill> {
     return this.billService.updateBill(bill);
   }
+
+  @Get('/consecutive')
+  async getConsecutiveForBill(
+    @Req() { user }: Request,
+  ): Promise<{ consecutive: number }> {
+    return this.billService.getConsecutiveForBill((user as any).company.id);
+  }
 }
