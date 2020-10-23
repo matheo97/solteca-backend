@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { getDatesByQuarter } from 'src/utils';
 import { Bill } from '../entities';
 import { BillDAO } from './bill.dao';
@@ -42,5 +42,29 @@ export class BillService {
       page,
       pageSize,
     );
+  }
+
+  async createBill(bill: Bill): Promise<Bill> {
+    if (await this.billDao.billNoAlreadyExists(bill.billNo)) {
+      throw new ConflictException({
+        error: 'Consecutivo de factura ya usado.',
+      });
+    }
+    return this.billDao.createBill(bill);
+  }
+
+  async updateBill(bill: Bill): Promise<Bill> {
+    if (!bill.id) {
+      throw new BadRequestException('Id de la factura es requerido');
+    }
+    bill.billItems.forEach((item, index) => {
+      if (!item.id) throw new BadRequestException(`Id del elemento ${index} es nulo`);
+    })
+    if (await this.billDao.billNoAlreadyExists(bill.billNo, bill.id)) {
+      throw new ConflictException({
+        error: 'Consecutivo de factura ya usado.',
+      });
+    }
+    return this.billDao.createBill(bill);
   }
 }

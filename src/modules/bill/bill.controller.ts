@@ -1,4 +1,13 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Bill } from '../entities';
 import { BillService } from './bill.service';
@@ -32,5 +41,15 @@ export class BillController {
       page,
       pageSize,
     );
+  }
+
+  @Post()
+  async createBill(@Body() bill: Bill): Promise<Bill> {
+    return this.billService.createBill(bill);
+  }
+
+  @Put()
+  async updateBill(@Body() bill: Bill): Promise<Bill> {
+    return this.billService.updateBill(bill);
   }
 }

@@ -199,4 +199,26 @@ export class BillDAO {
       results: result,
     };
   }
+
+  async createBill(bill: Bill): Promise<Bill> {
+    return this.repository.save(bill);
+  }
+
+  async billNoAlreadyExists(billNo: string, billId?: string): Promise<boolean> {
+    const bill = this.repository
+      .createQueryBuilder('bill')
+      .where('bill.billNo = :billNo', { billNo });
+
+    if (billId) {
+      bill.andWhere('bill.id != :billId', { billId });
+    } 
+
+    const result = await bill.getOne();
+    console.log('result', result);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
