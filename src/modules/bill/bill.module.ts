@@ -6,19 +6,9 @@ import { BillDAO } from './bill.dao';
 import { Bill } from '../entities/bill.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ Bill ]),
-  ],
-  providers: [
-    BillService,
-    BillDAO,
-  ],
-  controllers: [
-    BillController,
-  ],
-  exports: [
-    BillService,
-  ]
+  imports: [TypeOrmModule.forFeature([Bill])],
+  providers: [BillService, BillDAO],
+  controllers: [BillController],
+  exports: [BillService],
 })
-
 export class BillModule {}

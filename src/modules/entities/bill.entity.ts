@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
-import { IsUUID, IsOptional, Length, IsBoolean } from 'class-validator';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { IsUUID, IsOptional, Length, IsBoolean, IsNumber, IsArray } from 'class-validator';
 import { Auditable, BillItem, Company } from './index';
 
 @Entity('bill')
@@ -7,23 +14,31 @@ export class Bill extends Auditable {
   @PrimaryGeneratedColumn('uuid')
   @IsUUID()
   @IsOptional()
-  id?: string;
+  id?: string;   
 
   @Column({ name: 'bill_no' })
   @Length(2, 255)
   billNo?: string;
 
   @Column()
-  total?: string;
+  @IsNumber({ maxDecimalPlaces: 2 })
+  total?: number;
 
   @Column({ name: 'total_iva' })
-  totalIva?: string;
+  @IsNumber({ maxDecimalPlaces: 2 })
+  totalIva?: number;
 
   @Column({ name: 'company_id' })
+  @IsUUID()
   companyId?: string;
 
+  @Column({ name: 'related_company_id' })
+  @IsUUID()
+  relatedCompanyId?: string;
+
   @Column({ name: 'other_expenses' })
-  otherExpenses?: string;
+  @IsNumber({ maxDecimalPlaces: 2 })
+  otherExpenses?: number;
 
   @Column({ name: 'is_paid' })
   @IsBoolean()
@@ -33,18 +48,29 @@ export class Bill extends Auditable {
   @IsBoolean()
   isQuote?: boolean;
 
-  @Column({ name: 'is_sells_receipt' })
+  @Column({ name: 'is_sale_receipt' })
   @IsBoolean()
-  isSellsReceipt?: boolean;
+  isSaleReceipt?: boolean;
 
-  @OneToMany(() => BillItem, (BillItem) => BillItem.bill)
-  billItems?: BillItem[];
+  @OneToMany(
+    () => BillItem,
+    BillItem => BillItem.bill,
+    { cascade: true }
+  )
+  @IsArray()
+  billItems: BillItem[];
 
-  @ManyToOne(() => Company, Company => Company.id)
+  @ManyToOne(
+    () => Company,
+    Company => Company.id,
+  )
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
-  @ManyToOne(() => Company, Company => Company.id)
+  @ManyToOne(
+    () => Company,
+    Company => Company.id,
+  )
   @JoinColumn({ name: 'related_company_id' })
   relatedCompany: Company;
 }
