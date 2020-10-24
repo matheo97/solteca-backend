@@ -9,6 +9,6 @@ import { Bill } from '../entities/bill.entity';
   imports: [TypeOrmModule.forFeature([Bill])],
   providers: [BillService, BillDAO],
   controllers: [BillController],
-  exports: [BillService],
+  exports: [BillService, BillDAO],
 })
 export class BillModule {}
