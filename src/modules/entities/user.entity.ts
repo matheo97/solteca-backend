@@ -28,8 +28,7 @@ export class User extends Auditable {
   name: string;
 
   @Column({ name: 'last_name' })
-  @IsOptional()
-  @Length(0, 255)
+  @Length(2, 255)
   lastName?: string;
 
   @Column({ name: 'role_app' })

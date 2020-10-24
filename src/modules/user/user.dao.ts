@@ -1,5 +1,4 @@
-
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
@@ -8,7 +7,7 @@ import { User } from '../entities/user.entity';
 export class UserDAO {
   constructor(
     @InjectRepository(User)
-    private readonly repository: Repository<User>
+    private readonly repository: Repository<User>,
   ) {}
 
   async getUserInfoById(userId: string): Promise<User> {
@@ -24,5 +23,26 @@ export class UserDAO {
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
+  }
+
+  async createContact(companyId: string, user: User): Promise<User> {
+    return this.repository.save({
+      ...user,
+      roleApp: 'solteca-user',
+      company: { id: companyId },
+    });
+  }
+
+  async deleteContact(contactId: string): Promise<string> {
+    await this.repository
+    .delete({ id: contactId })
+    .catch(() => { 
+      throw new HttpException(
+        `Contacto no fue eliminado`, 
+        HttpStatus.INTERNAL_SERVER_ERROR
+      ); 
+    });
+
+    return 'Contacto fue eliminado';
   }
 }
