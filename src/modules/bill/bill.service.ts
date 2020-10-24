@@ -24,6 +24,10 @@ export class BillService {
     return this.billDao.getIVABalance(companyId, from, to);
   }
 
+  async getIVABalanceWithDates(companyId: string, from: string, to: string) {
+    return this.billDao.getIVABalance(companyId, from, to);
+  }
+
   async getAllBills(
     companyId: string,
     sale: boolean,
@@ -73,11 +77,22 @@ export class BillService {
     return this.billDao.createBill(bill);
   }
 
-  async getConsecutiveForBill(companyId: string): Promise<{consecutive: number}> {
+  async getConsecutiveForBill(
+    companyId: string,
+  ): Promise<{ consecutive: number }> {
     const bill = await this.billDao.getConsecutiveForBill(companyId);
     const currentConsecutiveUsed = parseInt(bill.billNo, 10);
     return {
       consecutive: currentConsecutiveUsed + 1,
     };
+  }
+
+  async getBillsByQuarter(
+    companyId: string,
+    from: string,
+    to: string,
+    isSale: boolean,
+  ): Promise<{ total: number; results: Bill[] }> {
+    return this.billDao.getBillsByQuarter(companyId, from, to, isSale);
   }
 }

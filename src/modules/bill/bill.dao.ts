@@ -212,6 +212,26 @@ export class BillDAO {
       .getOne();
   }
 
+  async getBillsByQuarter(
+    companyId: string,
+    from: string,
+    to: string,
+    isSaleReceipt: boolean,
+  ): Promise<{ total: number; results: Bill[] }> {
+    const [result, total] = await this.repository
+    .createQueryBuilder('bill')
+    .where('bill.companyId = :companyId', { companyId })
+    .andWhere('bill.isSaleReceipt = :isSaleReceipt', { isSaleReceipt })
+    .andWhere('bill.created_at >= :from', { from })
+    .andWhere('bill.created_at <= :to', { to })
+    .getManyAndCount();
+
+    return {
+      total,
+      results: result,
+    };
+  }
+
   async billNoAlreadyExists(billNo: string, billId?: string): Promise<boolean> {
     const bill = this.repository
       .createQueryBuilder('bill')

@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -60,5 +61,14 @@ export class CompanyController {
     @Param('contactId', ParseUUIDPipe) contactId: string,
   ) {
     return this.userService.deleteContact(contactId);
+  }
+
+  @Get('/taxes')
+  async getTaxes(
+    @Req() { user }: Request,
+    @Query('isSale') isSale: boolean,
+    @Query('quarter') quarter: string,
+  ) {
+    return this.companyService.getTaxes((user as any).company.id, quarter, isSale);
   }
 }

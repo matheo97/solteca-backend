@@ -1,4 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { getDatesByQuarterProvided } from 'src/utils';
 import { BillService } from '../bill/bill.service';
 import { Company } from '../entities';
 import { FileService } from '../file/file.service';
@@ -63,10 +64,35 @@ export class CompanyService {
 
   async updateCompany(company: Company): Promise<Company> {
     if (!company.id) {
-      throw new ConflictException(
-        `No se envio company id`,
-      );
+      throw new ConflictException(`No se envio company id`);
     }
     return this.createCompany(company);
+  }
+
+  async getTaxes(companyId: string, quarter: string, isSale: boolean) {
+    const quarterInfo = getDatesByQuarterProvided(quarter);
+
+    if (quarterInfo.error) {
+      throw new ConflictException(`Cuatrimestre Invalido`);
+    }
+
+    const balanceIVA = this.billService.getIVABalanceWithDates(
+      companyId,
+      quarterInfo.from,
+      quarterInfo.to,
+    );
+    const bills = this.billService.getBillsByQuarter(
+      companyId,
+      quarterInfo.from,
+      quarterInfo.to,
+      isSale,
+    );
+
+    const results = await Promise.all([balanceIVA, bills]);
+
+    return {
+      balanceIVA: results[0],
+      bills: results[1],
+    };
   }
 }
