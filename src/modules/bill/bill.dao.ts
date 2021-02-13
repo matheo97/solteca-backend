@@ -3,6 +3,7 @@ import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Bill } from '../entities/bill.entity';
 import { getDatesByQuarterProvided } from 'src/utils';
+import { BillByQuarter, IVABalance, SalesPerMonth } from './bill.dto';
 
 @Injectable()
 export class BillDAO {
@@ -11,7 +12,10 @@ export class BillDAO {
     private readonly repository: Repository<Bill>,
   ) {}
 
-  async getSalesPerMonth(companyId: string, date: Date) {
+  async getSalesPerMonth(
+    companyId: string,
+    date: Date,
+  ): Promise<SalesPerMonth[]> {
     return this.repository.query(`
       SELECT to_char(b.created_at,'Mon') as month,
              extract(year from b.created_at) as year,
@@ -25,7 +29,7 @@ export class BillDAO {
     `);
   }
 
-  async getTotalOfAllBillsNotPaid(companyId: string, isSalesReceipt: boolean) {
+  async getTotalOfAllBillsNotPaid(companyId: string, isSalesReceipt: boolean): Promise<number> {
     return this.repository.query(`
       SELECT sum("total") as total
         FROM bill as b
@@ -33,18 +37,18 @@ export class BillDAO {
         AND b.is_quote = false
         AND b.is_sale_receipt = ${isSalesReceipt}
         AND b.is_paid = false
-    `);
+    `)[0].total;
   }
 
-  async getIVABalance(companyId: string, from: string, to: string) {
-    const ivaSales = await this.repository.query(`
+  async getIVABalance(companyId: string, from: string, to: string): Promise<IVABalance> {
+    const ivaSales = this.repository.query(`
       SELECT sum("total_iva")
-      FROM bill as b
-      WHERE company_id = '${companyId}'
-      AND b.is_quote = false
-      AND b.is_sale_receipt = true
-      AND b.created_at BETWEEN '${from}' AND '${to}'
-    `);
+        FROM bill as b
+        WHERE company_id = '${companyId}'
+        AND b.is_quote = false
+        AND b.is_sale_receipt = true
+        AND b.created_at BETWEEN '${from}' AND '${to}'
+    `)[0].total_iva;
 
     const ivaBuys = await this.repository.query(`
       SELECT sum("total_iva")
@@ -217,14 +221,14 @@ export class BillDAO {
     from: string,
     to: string,
     isSaleReceipt: boolean,
-  ): Promise<{ total: number; results: Bill[] }> {
+  ): Promise<BillByQuarter> {
     const [result, total] = await this.repository
-    .createQueryBuilder('bill')
-    .where('bill.companyId = :companyId', { companyId })
-    .andWhere('bill.isSaleReceipt = :isSaleReceipt', { isSaleReceipt })
-    .andWhere('bill.created_at >= :from', { from })
-    .andWhere('bill.created_at <= :to', { to })
-    .getManyAndCount();
+      .createQueryBuilder('bill')
+      .where('bill.companyId = :companyId', { companyId })
+      .andWhere('bill.isSaleReceipt = :isSaleReceipt', { isSaleReceipt })
+      .andWhere('bill.created_at >= :from', { from })
+      .andWhere('bill.created_at <= :to', { to })
+      .getManyAndCount();
 
     return {
       total,

@@ -6,25 +6,36 @@ import {
 import { getDatesByQuarter } from 'src/utils';
 import { Bill } from '../entities';
 import { BillDAO } from './bill.dao';
+import { BillByQuarter, IVABalance, SalesPerMonth } from './bill.dto';
 
 @Injectable()
 export class BillService {
   constructor(private readonly billDao: BillDAO) {}
 
-  async getSalesPerMonth(companyId: string, date: Date) {
+  async getSalesPerMonth(
+    companyId: string,
+    date: Date,
+  ): Promise<SalesPerMonth[]> {
     return this.billDao.getSalesPerMonth(companyId, date);
   }
 
-  async getTotalOfAllBillsNotPaid(companyId: string, isSalesReceipt: boolean) {
+  async getTotalOfAllBillsNotPaid(
+    companyId: string,
+    isSalesReceipt: boolean,
+  ): Promise<number> {
     return this.billDao.getTotalOfAllBillsNotPaid(companyId, isSalesReceipt);
   }
 
-  async getIVABalance(companyId: string, date: Date) {
+  async getIVABalance(companyId: string, date: Date): Promise<IVABalance> {
     const { from, to } = getDatesByQuarter(date);
     return this.billDao.getIVABalance(companyId, from, to);
   }
 
-  async getIVABalanceWithDates(companyId: string, from: string, to: string) {
+  async getIVABalanceWithDates(
+    companyId: string,
+    from: string,
+    to: string,
+  ): Promise<IVABalance> {
     return this.billDao.getIVABalance(companyId, from, to);
   }
 
@@ -92,7 +103,7 @@ export class BillService {
     from: string,
     to: string,
     isSale: boolean,
-  ): Promise<{ total: number; results: Bill[] }> {
+  ): Promise<BillByQuarter> {
     return this.billDao.getBillsByQuarter(companyId, from, to, isSale);
   }
 }

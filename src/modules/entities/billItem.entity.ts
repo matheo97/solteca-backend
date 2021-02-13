@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { IsUUID, IsOptional, Length, IsInt, IsNumber } from 'class-validator';
 import { Auditable, Bill } from './index';
 import { ApiProperty } from '@nestjs/swagger';
@@ -52,7 +58,10 @@ export class BillItem extends Auditable {
   })
   total: number;
 
-  @ManyToOne(() => Bill, Bill => Bill.billItems)
+  @ManyToOne(
+    () => Bill,
+    Bill => Bill.billItems,
+  )
   @JoinColumn({ name: 'bill_id' })
   bill: Bill;
 }

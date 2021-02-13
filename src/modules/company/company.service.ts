@@ -4,6 +4,7 @@ import { BillService } from '../bill/bill.service';
 import { Company } from '../entities';
 import { FileService } from '../file/file.service';
 import { CompanyDAO } from './company.dao';
+import { Taxes } from './company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -69,7 +70,11 @@ export class CompanyService {
     return this.createCompany(company);
   }
 
-  async getTaxes(companyId: string, quarter: string, isSale: boolean) {
+  async getTaxes(
+    companyId: string,
+    quarter: string,
+    isSale: boolean,
+  ): Promise<Taxes> {
     const quarterInfo = getDatesByQuarterProvided(quarter);
 
     if (quarterInfo.error) {
@@ -81,6 +86,7 @@ export class CompanyService {
       quarterInfo.from,
       quarterInfo.to,
     );
+
     const bills = this.billService.getBillsByQuarter(
       companyId,
       quarterInfo.from,

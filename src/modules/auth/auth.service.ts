@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { compareSync } from 'bcryptjs';
+import { AccessToken } from './auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,10 +23,10 @@ export class AuthService {
     return new UnauthorizedException(401, 'The email or password you entered is incorrect.');
   }
 
-  async login(user: any) {
+  async login(user: any): Promise<AccessToken> {
     const payload = { username: user.username, sub: user.userId };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }
