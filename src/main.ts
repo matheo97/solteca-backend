@@ -2,16 +2,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { BillModule } from './modules';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   const options = new DocumentBuilder()
-    .setTitle('Velostics APIs')
-    .setDescription('Everything about Velostics APIs')
+    .setTitle('Solteca APIs')
+    .setDescription('Everything about Solteca APIs')
     .setVersion('1.0')
     .addBearerAuth()
-    .setContact('Velostics Admin', '','dan@chaione.com')
+    .setContact('Solteca Admin', '','ventas@soltecaindustrial.co')
     .build();
   
   const document = SwaggerModule.createDocument(app, options);

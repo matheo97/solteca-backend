@@ -37,18 +37,18 @@ export class BillDAO {
         AND b.is_quote = false
         AND b.is_sale_receipt = ${isSalesReceipt}
         AND b.is_paid = false
-    `)[0].total;
+    `)[0]?.total || 0;
   }
 
   async getIVABalance(companyId: string, from: string, to: string): Promise<IVABalance> {
-    const ivaSales = this.repository.query(`
+    const ivaSales = await this.repository.query(`
       SELECT sum("total_iva")
         FROM bill as b
         WHERE company_id = '${companyId}'
         AND b.is_quote = false
         AND b.is_sale_receipt = true
         AND b.created_at BETWEEN '${from}' AND '${to}'
-    `)[0].total_iva;
+    `)[0]?.total_iva ||  0;
 
     const ivaBuys = await this.repository.query(`
       SELECT sum("total_iva")
