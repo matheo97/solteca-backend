@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,7 +7,7 @@ import { Company } from '../entities/company.entity';
 export class CompanyDAO {
   constructor(
     @InjectRepository(Company)
-    private readonly repository: Repository<Company>
+    private readonly repository: Repository<Company>,
   ) {}
 
   async getCompanyDetailById(companyId: string): Promise<Company> {
@@ -18,10 +17,19 @@ export class CompanyDAO {
       .getOne();
   }
 
+  async getCompaniesByName(
+    name: string,
+  ): Promise<Company[]> {
+    return this.repository
+      .createQueryBuilder('company')
+      .where('company.name ILIKE :name', { name: `%${name}%` })
+      .getMany();
+  }
+
   async companiesWithTheSameNit(nit: string, id?: string): Promise<Company> {
     const query = this.repository
       .createQueryBuilder('company')
-      .where('company.nit = :nit', { nit })
+      .where('company.nit = :nit', { nit });
 
     if (id) {
       query.andWhere('company.id != :id', { id });
@@ -29,7 +37,6 @@ export class CompanyDAO {
 
     return await query.getOne();
   }
-
 
   async createCompany(company: Company): Promise<Company> {
     return this.repository.save(company);

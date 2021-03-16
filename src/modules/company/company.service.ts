@@ -50,6 +50,12 @@ export class CompanyService {
     };
   }
 
+  async getCompaniesByName(
+    name: string,
+  ): Promise<Company[]> {
+    return this.companyDao.getCompaniesByName(name);
+  }
+
   async createCompany(company: Company): Promise<Company> {
     const companiesWithSameNit = await this.companyDao.companiesWithTheSameNit(
       company.nit,

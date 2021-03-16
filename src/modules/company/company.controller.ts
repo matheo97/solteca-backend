@@ -16,7 +16,13 @@ import { UserService } from '../user/user.service';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Company, User } from '../entities';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { CompanyInfo, Taxes } from './company.dto';
 
 @Controller('/company')
@@ -36,16 +42,36 @@ export class CompanyController {
     return this.companyService.getInfo((user as any).company.id);
   }
 
+  @Get('/getCompaniesByName')
+  @ApiOperation({ summary: 'Get all info of Companies by name' })
+  @ApiOkResponse({
+    description: 'List of Companies filtered by name',
+    schema: {
+      type: 'array',
+      items: { $ref: getSchemaPath(Company) },
+    },
+  })
+  async getCompaniesByName(@Query('name') name: string): Promise<Company[]> {
+    if (!name) return [];
+    return this.companyService.getCompaniesByName(name);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create Company' })
-  @ApiOkResponse({ description: 'Company successfully created.', type: Company })
+  @ApiOkResponse({
+    description: 'Company successfully created.',
+    type: Company,
+  })
   async createCompany(@Body() company: Company): Promise<Company> {
     return this.companyService.createCompany(company);
   }
 
   @Put()
   @ApiOperation({ summary: 'Update Company' })
-  @ApiOkResponse({ description: 'Company successfully updated.', type: Company })
+  @ApiOkResponse({
+    description: 'Company successfully updated.',
+    type: Company,
+  })
   async updateCompany(@Body() company: Company): Promise<Company> {
     return this.companyService.updateCompany(company);
   }
@@ -87,6 +113,10 @@ export class CompanyController {
     @Query('isSale') isSale: boolean,
     @Query('quarter') quarter: string,
   ): Promise<Taxes> {
-    return this.companyService.getTaxes((user as any).company.id, quarter, isSale);
+    return this.companyService.getTaxes(
+      (user as any).company.id,
+      quarter,
+      isSale,
+    );
   }
 }
